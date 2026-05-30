@@ -1,21 +1,12 @@
-insert into products(id, name, category, price, stock) VALUES
-    (6,'Điều hòa Panasonic',  'Home Appliances', 400.00,  10);
+select p.product_name,sum(total_price) as total_revenue  from orders o
+inner join products p on o.product_id=p.product_id
+group by p.product_name
+having sum(total_price) = (select sum(total_price) as total_revenue from orders o
+                           inner join products p on o.product_id=p.product_id
+                           group by p.product_name
+                           order by sum(total_price) desc limit 1);
 
-update products
-set stock=7 where name='Laptop Dell';
 
-delete from products
-where stock=0;
-
-select *from products
-order by price asc;
-
-select *from products
-where price between 100 and 1000;
-
-select *from products
-where name like '%LG%' or name like '%Samsung%';
-
-select *from products
-order by price desc
-    limit 2 offset 1
+select category,sum(orders.total_price) from products
+inner join orders on orders.product_id=products.product_id
+group by category
