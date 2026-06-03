@@ -1,12 +1,24 @@
-select p.product_name,sum(total_price) as total_revenue  from orders o
-inner join products p on o.product_id=p.product_id
-group by p.product_name
-having sum(total_price) = (select sum(total_price) as total_revenue from orders o
-                           inner join products p on o.product_id=p.product_id
-                           group by p.product_name
-                           order by sum(total_price) desc limit 1);
+create view v_order_summary as
+select full_name, total_amount,
+       order_date from orders
+inner join customer on orders.customer_id = customer.customer_id;
 
+select *from v_order_summary;
 
-select category,sum(orders.total_price) from products
-inner join orders on orders.product_id=products.product_id
-group by category
+create view v_order as
+select *from orders
+where total_amount>=1000000 with check option;
+
+select *from v_order;
+
+update v_order
+set total_amount=2300000 where id=2;
+
+create view v_monthly_sales as
+select distinct extract(month from order_date),sum(total_amount) from orders
+group by extract(month from order_date);
+
+drop view v_monthly_sales;
+
+-- DROP VIEW chỉ xoá định nghĩa trong hệ thống, không xoá gì trong dữ liệu gốc
+-- DROP MATERIALIZED VIEW xoá bảng MV thực sự, cả index của MV đó trên ổ cứng
