@@ -1,25 +1,22 @@
-create or replace procedure check_stock(
-    p_id INT,
-    p_qty INT
-) language plpgsql
-as $$
+create or replace function check_credit_limit()
+returns trigger as $$
     declare
-    v_quantity int;
+        f_limit numeric(15,2);
     begin
-        select quantity into v_quantity from inventory
-        where product_id=p_id;
-        if v_quantity is null then
-            raise notice 'Không tồn tại hàng';
-        elsif v_quantity >= p_qty then
-            raise notice 'Có đủ hàng';
-        else
-            raise notice 'Không đủ hàng';
-        end if;
-    exception
-        when others then
-            raise notice 'Xảy ra lỗi: %',SQLERRM;
-        rollback;
-    end;
-$$;
+        select COALESCE(credit_limit) into f_limit from customers
+        where id=new.customer_id;
 
-call check_stock(99,1000);
+        if f_limit < new.order_amount then
+            raise exception 'Xảy ra lỗi';
+        end if;
+        return new;
+    end;
+$$ language plpgsql;
+
+create trigger trg_check_credit
+    before insert on orders
+    for each row
+    execute function check_credit_limit();
+
+insert into orders(customer_id, order_amount) VALUES
+    (1,5000000000);
