@@ -1,22 +1,26 @@
-create or replace function check_credit_limit()
+create or replace function f_check()
 returns trigger as $$
     declare
-        f_limit numeric(15,2);
+        current_stock int;
     begin
-        select COALESCE(credit_limit) into f_limit from customers
-        where id=new.customer_id;
+        select coalesce(stock) into current_stock from products
+        where product_id=new.product_id;
 
-        if f_limit < new.order_amount then
-            raise exception 'Xảy ra lỗi';
+        if (current_stock < new.quantity) then
+            raise exception 'Không đủ hàng/Không có sản phẩm đó';
         end if;
+
+        update products
+        set stock=stock-new.quantity where product_id=new.product_id;
         return new;
     end;
 $$ language plpgsql;
 
-create trigger trg_check_credit
-    before insert on orders
+create trigger t_check
+    before insert on sales
     for each row
-    execute function check_credit_limit();
+    execute function f_check();
 
-insert into orders(customer_id, order_amount) VALUES
-    (1,5000000000);
+insert into sales(product_id, quantity) values
+(3,30),
+(2,50);
