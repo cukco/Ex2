@@ -1,19 +1,16 @@
-class Student{
-    String StudentId;
-    String StudentName;
-    int age;
-    public Student(String id,String name,int age){
-        this.StudentId=id;
-        this.StudentName=name;
-        this.age=age;
-    }
-    public void displayData(){
-        System.out.print("ID: "+this.StudentId+",Name: "+this.StudentName+",Age: "+this.age);
+class Book{
+    String title;
+    String author;
+    double price;
+    public Book(String title,String author,double price){
+        this.title=title;
+        this.author=author;
+        this.price=price;
     }
 }
-public class Ex771 {
+public class Ex72 {
     public static void main(String[] args){
-        Student me=new Student("202517639","Quang",20);
-        me.displayData();
+        Book me=new Book("Đất rừng phương Nam","Đoàn Giỏi",20);
+        System.out.print("Title: "+me.title+",Author: "+me.author+",Price: "+me.price);
     }
 }
