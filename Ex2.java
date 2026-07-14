@@ -1,16 +1,36 @@
-class Book{
-    String title;
-    String author;
-    double price;
-    public Book(String title,String author,double price){
-        this.title=title;
-        this.author=author;
-        this.price=price;
+import java.lang.Math;
+class Shape{
+    public double area(){
+        return 0;
+    }
+
+}
+class  Rectangle extends Shape{
+    private double width;
+    private double height;
+    public Rectangle( double width,double height){
+        this.height=height;
+        this.width=width;
+    }
+    @Override
+    public double area() {
+        return width*height;
     }
 }
-public class Ex72 {
+class  Circle extends Shape{
+    private double radius;
+    public Circle( double radius){
+        this.radius=radius;
+    }
+    @Override
+    public double area() {
+        return Math.PI*radius*radius;
+    }
+}
+public class Ex102 {
     public static void main(String[] args){
-        Book me=new Book("Đất rừng phương Nam","Đoàn Giỏi",20);
-        System.out.print("Title: "+me.title+",Author: "+me.author+",Price: "+me.price);
+        Shape s1 = new Rectangle(2,3);
+        Shape s2 = new Circle(1);
+        System.out.printf("Diện tích hình chữ nhât: %.2f\nDiện tích hình tròn: %.2f",s1.area(),s2.area());
     }
 }
